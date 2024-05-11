@@ -1,0 +1,84 @@
+@startuml Base scenario
+
+autonumber
+actor Driver as driver
+participant "Communication Interface" as interface
+participant "UCM Master" as master
+participant "OTA client" as ota
+participant "Backend" as backend
+participant "State Manager" as state
+participant "UCM" as ucm
+participant "Cryptography" as crypto
+
+driver -> interface: Update
+activate interface
+interface -> master: CheckUpdates
+activate master
+
+master -> ota: CheckUpdates
+activate ota
+ota -> backend
+activate backend
+backend --> ota
+deactivate backend
+ota --> master: available
+deactivate ota
+
+master --> interface: available
+deactivate master
+
+interface -> driver: Approval
+driver --> interface: ok
+interface -> master: Update
+activate master
+master -> state: SetState("Update")
+
+activate state
+state --> master: grant
+deactivate state
+
+master -> ota: TransferPackage
+activate ota
+ota -> backend: Download
+activate backend
+backend --> ota: data
+deactivate backend
+ota --> master: complete
+deactivate ota
+
+
+master -> ucm: InstallPacakge
+activate ucm
+ucm -> crypto: Validate
+activate ucm
+activate crypto
+crypto --> ucm: valid
+deactivate crypto
+ucm -> ucm: Install
+ucm --> master: complete
+deactivate ucm
+deactivate ucm
+
+master -> ucm: VerifyUpdate
+activate ucm
+ucm --> master: verified
+deactivate ucm
+
+master -> ucm: Activate
+activate ucm
+ucm --> master: activated
+deactivate ucm
+
+master -> state: SetState("Idle")
+activate state
+state --> master: grant
+deactivate state
+
+master --> interface: complete
+deactivate master
+
+interface --> driver: finish
+
+deactivate interface
+
+@enduml

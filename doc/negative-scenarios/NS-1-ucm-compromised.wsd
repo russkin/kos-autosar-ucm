@@ -1,0 +1,79 @@
+@startuml UCM Compromised
+
+actor Driver as driver
+participant "Communication Interface" as interface
+participant "UCM Master" as master
+participant "OTA client" as ota
+participant "Backend" as backend
+participant "State Manager" as state
+participant "UCM" as ucm #red
+participant "Cryptography" as crypto
+
+driver -> interface: Update
+activate interface
+interface -> master: CheckUpdates
+activate master
+
+master -> ota: CheckUpdates
+activate ota
+ota -> backend
+activate backend
+backend --> ota
+deactivate backend
+ota --> master: available
+deactivate ota
+
+master --> interface: available
+deactivate master
+
+interface -> driver: Approval
+driver --> interface: ok
+interface -> master: Update
+activate master
+master -> ota: TransferPackage
+activate ota
+ota -> backend: Download
+activate backend
+backend --> ota: data
+deactivate backend
+ota --> master: complete
+deactivate ota
+
+master -> state: SetState("Update")
+activate state
+state --> master: grant
+deactivate state
+
+master -> ucm: InstallPacakge
+group #FF000030 Compromised
+activate ucm
+ucm [#red]-> ucm: InstallMalware
+activate ucm
+deactivate ucm
+ucm -[#red]-> master: complete
+deactivate ucm
+
+master -> ucm: VerifyUpdate
+activate ucm
+ucm -[#red]-> master: verified
+deactivate ucm
+
+master -> ucm: Activate
+activate ucm
+ucm -[#red]-> master: activated
+deactivate ucm
+end 
+
+master -> state: SetState("Idle")
+activate state
+state --> master: grant
+deactivate state
+
+master --> interface: complete
+deactivate master
+
+interface --> driver: finish
+
+deactivate interface
+
+@enduml
