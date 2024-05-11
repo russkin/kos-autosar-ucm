@@ -1,0 +1,14 @@
+@startuml State diagram
+hide empty description
+
+[*] --> Idle
+
+Idle --> Drive
+Drive --> Idle
+
+Idle --> [*]
+
+Idle -> Update
+Update --> Idle
+
+@enduml

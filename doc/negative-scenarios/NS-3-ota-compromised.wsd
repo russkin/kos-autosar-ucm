@@ -1,0 +1,80 @@
+@startuml OTA Client compormised
+
+autonumber
+actor Driver as driver
+participant "Communication Interface" as interface
+participant "UCM Master" as master
+participant "OTA client" as ota #red
+participant "Backend" as backend
+participant "State Manager" as state
+participant "UCM" as ucm
+participant "Cryptography" as crypto
+
+driver -> interface: Update
+activate interface
+interface -> master: CheckUpdates
+activate master
+
+master -> ota: CheckUpdates
+activate ota
+group #FF000030 Compromised
+ota [#red]-> backend
+activate backend
+backend -[#red]-> ota
+deactivate backend
+ota -[#red]-> master: available
+end
+deactivate ota
+
+master --> interface: available
+deactivate master
+
+interface -> driver: Approval
+driver --> interface: ok
+interface -> master: Update
+activate master
+master -> state: SetState("Update")
+
+activate state
+state --> master: grant
+deactivate state
+
+master -> ota: TransferPackage
+activate ota
+group #FF000030 Compromised
+ota [#red]-> backend: Download
+activate backend
+backend -[#red]-> ota: data
+deactivate backend
+ota -[#red]-> master: complete
+end
+deactivate ota
+
+
+master -> ucm: InstallPacakge
+activate ucm
+group #00FF0030 Invalid signature
+ucm -> crypto: Validate
+activate ucm
+activate crypto
+crypto --> ucm: invalid
+deactivate crypto
+end
+ucm --> master: failed
+deactivate ucm
+deactivate ucm
+
+
+master -> state: SetState("Idle")
+activate state
+state --> master: grant
+deactivate state
+
+master --> interface: failed
+deactivate master
+
+interface --> driver: failed
+
+deactivate interface
+
+@enduml
