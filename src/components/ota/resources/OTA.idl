@@ -1,0 +1,13 @@
+package ucm.OTA
+
+const UInt8 UpdatesAvailable = 1;
+const UInt8 UpdatesUnAvailable = 2;
+
+const UInt8 TransferPackageSucceeded = 1;
+const UInt8 TransferPackageFailed = 2;
+
+
+interface {
+    CheckUpdates(out UInt8 result);
+    TransferPackage(out UInt8 result);
+}

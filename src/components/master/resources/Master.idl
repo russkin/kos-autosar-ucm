@@ -1,0 +1,13 @@
+package ucm.Master
+
+const UInt8 UpdatesAvailable = 1;
+const UInt8 UpdatesUnAvailable = 2;
+
+const UInt8 UpdateSucceeded = 1;
+const UInt8 UpdateFailed = 2;
+
+
+interface {
+    CheckUpdates(out UInt8 result);
+    Update(out UInt8 result);
+}

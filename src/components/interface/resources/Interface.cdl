@@ -1,0 +1,9 @@
+/* Definition of the `ping` component. */
+
+component ucm.Interface
+
+
+/* Declaration of a named implementation of the "Ping" interface. */
+endpoints {
+    interface : ucm.Interface
+}

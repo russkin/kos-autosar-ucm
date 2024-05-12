@@ -1,0 +1,5 @@
+entity OTA
+
+components {
+    ota : ucm.OTA
+}

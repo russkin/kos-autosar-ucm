@@ -1,0 +1,3 @@
+/* Package with an "IPing" interface declaration. */
+
+package ucm.Interface

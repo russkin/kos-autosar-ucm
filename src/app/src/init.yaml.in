@@ -1,0 +1,29 @@
+entities:
+
+# The `OTA` entity can only respond to requests.
+- name: ucm.OTA
+@INIT_ota_ENTITY_CONNECTIONS@
+
+# The `Interface` entity can call `Master`
+- name: ucm.Interface
+  connections:
+  - target: ucm.Master
+    id: master_connection
+@INIT_interface_ENTITY_CONNECTIONS@
+
+# The `Master` entity can call `OTA`.
+- name: ucm.Master
+  connections:
+  - target: ucm.OTA
+    id: ota_connection
+@INIT_master_ENTITY_CONNECTIONS@
+
+- name: ucm.KlogEntity
+  path: @INIT_KlogEntity_PATH@
+  connections:
+  - target: ucm.KlogStorageEntity
+    id: {var: KLOG_STORAGE_SERVER_CONNECTION_ID, include: klog_storage/client.h}
+
+- name: ucm.KlogStorageEntity
+
+@INIT_EXTERNAL_ENTITIES@

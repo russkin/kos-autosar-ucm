@@ -1,0 +1,6 @@
+entity ucm.KlogStorageEntity
+
+components
+{
+    klogStorage : kl.KlogStorage
+}

@@ -1,0 +1,6 @@
+entity ucm.KlogEntity
+
+components
+{
+    klog : kl.Klog
+}

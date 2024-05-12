@@ -1,0 +1,30 @@
+version: "3"
+services:
+  prod:
+    image: kos/runtime-${SDK_VERSION}
+    # WARNING: build with flag `--no-cache` to avoid cache hit after package changes
+    # docker-compose build --no-cache prod
+    # or (faster)
+    # docker-compose build --build-arg CACHEBUST=$SECONDS prod
+    build: 
+      context: .
+      args:
+        - SDK_VERSION=$SDK_VERSION
+        - SDK_DOWNLOAD_URL
+      target: runtime
+
+  dev:
+    image: kos/dev-${SDK_VERSION}
+    stdin_open: true
+    tty: true
+    build: 
+      context: .
+      cache_from:
+        - kos/dev-${SDK_VERSION}
+        
+      target: build
+      args:
+        - SDK_VERSION
+        - SDK_DOWNLOAD_URL
+    volumes:
+      - .:/app

@@ -1,0 +1,193 @@
+/* Definition of the execute interface. */
+execute: kl.core.Execute
+
+/* Import the file with the declaration of basic security policy aliases. */
+use nk.base._
+
+/* Declaration of entities. */
+use EDL Einit
+use EDL kl.core.Core
+use EDL kl.VfsNet
+use EDL kl.drivers.BSP
+use EDL kl.drivers.GPIO
+use EDL ucm.KlogEntity
+use EDL ucm.KlogStorageEntity
+
+use EDL ucm.Master
+use EDL ucm.Interface
+use EDL ucm.OTA
+
+/* Execution of entities allowed. */
+execute {
+    grant ()
+}
+
+/* Request messages allowed. */
+request {
+    grant ()
+}
+
+/* Response messages allowed. */
+response {
+    grant ()
+}
+
+error {
+    grant ()
+}
+
+/* Calls to the security interface are ignored. */
+security {
+    grant ()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.BSP class to send requests to the
+ * KasperskyOS kernel and get responses. This enables the BSP driver to use
+ * core endpoints.
+ */
+request src = kl.drivers.BSP, dst = kl.core.Core
+{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.BSP
+{
+    grant()
+}
+
+execute src=Einit, dst=kl.drivers.GPIO
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.GPIO class
+ * to send requests to the KasperskyOS kernel and get responses.
+ * This enables the GPIO program to use core endpoints.
+ */
+request src = kl.drivers.GPIO, dst = kl.core.Core
+{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.GPIO
+{
+    grant()
+}
+
+
+request src=ucm.KlogEntity dst=ucm.KlogStorageEntity interface=kl.KlogStorage method=write { grant () }
+response src=ucm.KlogStorageEntity dst=ucm.KlogEntity interface=kl.KlogStorage method=write { grant () }
+
+request src=ucm.KlogEntity, dst=kl.core.Core {
+    // Interface to the Synchronization service.
+    match interface=kl.core.Sync { grant () }
+    // Interface to the Task service.
+    match interface=kl.core.Task {
+        match method=FreeSelfEnv { grant () }
+        match method=GetPath { grant () }
+        match method=GetName { grant () }
+        match method=Exit { grant () }
+    }
+    // Interface to the Virtual Memory Manager (VMM) service.
+    match interface=kl.core.VMM { grant () }
+    // Interface to the Thread service.
+    match interface=kl.core.Thread { grant () }
+    // Interface to the Hal service.
+    match interface=kl.core.HAL, method=DebugWrite { grant () }
+    match interface=kl.core.HAL, method=GetEnv { grant () }
+    // Interface to the HandleManager service.
+    match interface=kl.core.Handle { grant () }
+    // Audit interface of the Vlog component.
+    match interface=kl.core.Audit { grant () }
+}
+
+response src=kl.core.Core, dst=ucm.KlogEntity { grant () }
+
+request src=ucm.KlogStorageEntity, dst=kl.core.Core {
+    // Interface to the Synchronization service.
+    match interface=kl.core.Sync { grant () }
+    // Interface to the Task service.
+    match interface=kl.core.Task {
+        match method=FreeSelfEnv { grant () }
+        match method=GetPath { grant () }
+        match method=GetName { grant () }
+        match method=Exit { grant () }
+    }
+    // Interface to the Virtual Memory Manager (VMM) service.
+    match interface=kl.core.VMM { grant () }
+    // Interface to the Thread service.
+    match interface=kl.core.Thread { grant () }
+    // Interface to the Hal service.
+    match interface=kl.core.HAL, method=DebugWrite { grant () }
+    match interface=kl.core.HAL, method=GetEnv { grant () }
+    // Interface to the HandleManager service.
+    match interface=kl.core.Handle { grant () }
+}
+
+response src=kl.core.Core, dst=ucm.KlogStorageEntity { grant () }
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the kl.VfsNet class.
+ */
+execute src=Einit, dst=kl.VfsNet
+{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.VfsNet class to send requests to the KasperskyOS kernel and get
+ * responses. This enables the VfsNet program to use core endpoints.
+ */
+request src=kl.VfsNet, dst=kl.core.Core
+{
+    grant()
+}
+
+response src=kl.core.Core, dst=kl.VfsNet
+{
+    grant()
+}
+
+
+/*
+request src=ucm.Interface,
+    dst=ucm.Master
+    endpoint=master.master {
+        match method=Update { grant() }
+        match method=CheckUpdates { grant() }
+}
+
+request src=ucm.Master,
+    dst=ucm.OTA
+    endpoint=ota.ota {
+        match method=TransferPackage { grant() }
+        match method=CheckUpdates { grant() }
+}
+*/
+
+audit profile trace = {
+    // Complete silence.
+    0: {},
+    // Only denied by kss.
+    1: {
+        base: {
+            kss: [ "denied" ]
+        },
+    },
+    // Only denied from everyone.
+    2: {
+        base: {
+            kss: [ "denied" ]
+        },
+    },
+    // All listening.
+    3: {
+        base: {
+            kss: [ "granted", "denied" ]
+        },
+    },
+}
+// We assign the level of the audit profile used by default.
+audit default = trace 2

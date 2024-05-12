@@ -1,0 +1,8 @@
+/* Definition of the `OTA` component. */
+
+component ucm.OTA
+
+endpoints {
+    /* Declaration of a named implementation of the "OTA" interface. */
+    ota : ucm.OTA
+}

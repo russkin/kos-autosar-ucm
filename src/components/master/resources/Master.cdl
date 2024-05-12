@@ -1,0 +1,8 @@
+/* Definition of the `UCM MAster` component. */
+
+component ucm.Master
+
+endpoints {
+    /* Declaration of a named implementation of the "UCM Master" interface. */
+    master : ucm.Master
+}
