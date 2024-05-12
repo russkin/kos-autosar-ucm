@@ -49,7 +49,7 @@ ota --> master: complete
 deactivate ota
 
 
-master -> ucm: InstallPacakge
+master -> ucm: InstallPackage
 activate ucm
 ucm -> crypto: Validate
 activate ucm

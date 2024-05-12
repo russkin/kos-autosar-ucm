@@ -1,9 +1,9 @@
-@startuml Base scenario
+@startuml UCM Master compormised
 
 autonumber
 actor Driver as driver
 participant "Communication Interface" as interface
-participant "UCM Master" as master
+participant "UCM Master" as master #red
 participant "OTA client" as ota
 participant "Backend" as backend
 participant "State Manager" as state
@@ -31,11 +31,13 @@ interface -> driver: Approval
 driver --> interface: ok
 interface -> master: Update
 activate master
+group #FF000030 Compromised
 master -> state: SetState("Update")
 
 activate state
-state --> master: grant
+state -[#red]-> master: deny
 deactivate state
+end
 
 master -> ota: TransferPackage
 activate ota
@@ -69,10 +71,12 @@ activate ucm
 ucm --> master: activated
 deactivate ucm
 
+group #FF000030 Compromised
 master -> state: SetState("Idle")
 activate state
-state --> master: grant
+state -[#red]-> master: deny
 deactivate state
+end
 
 master --> interface: complete
 deactivate master

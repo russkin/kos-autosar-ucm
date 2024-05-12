@@ -44,7 +44,7 @@ activate state
 state --> master: grant
 deactivate state
 
-master -> ucm: InstallPacakge
+master -> ucm: InstallPackage
 group #FF000030 Compromised
 activate ucm
 ucm [#red]-> ucm: InstallMalware

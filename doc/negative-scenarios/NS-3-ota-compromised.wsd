@@ -51,7 +51,7 @@ end
 deactivate ota
 
 
-master -> ucm: InstallPacakge
+master -> ucm: InstallPackage
 activate ucm
 group #00FF0030 Invalid signature
 ucm -> crypto: Validate
