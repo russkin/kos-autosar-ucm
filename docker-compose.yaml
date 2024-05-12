@@ -1,7 +1,7 @@
 version: "3"
 services:
   prod:
-    image: kos/runtime-${SDK_VERSION}
+    image: kos/runtime:${SDK_VERSION}
     # WARNING: build with flag `--no-cache` to avoid cache hit after package changes
     # docker-compose build --no-cache prod
     # or (faster)
@@ -14,13 +14,13 @@ services:
       target: runtime
 
   dev:
-    image: kos/dev-${SDK_VERSION}
+    image: kos/dev:${SDK_VERSION}
     stdin_open: true
     tty: true
     build: 
       context: .
       cache_from:
-        - kos/dev-${SDK_VERSION}
+        - kos/dev:${SDK_VERSION}
         
       target: build
       args:
